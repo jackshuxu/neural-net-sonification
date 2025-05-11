@@ -8,13 +8,22 @@ export default function App() {
   const { activations, error } = useNetwork(inputArr);
 
   return (
-    <div style={{ display: "flex", gap: 20, padding: 20, height: "100vh" }}>
-      <div>
-        <h3 style={{ color: "#fff" }}>Draw Digit</h3>
-        <InputCanvas onChange={setInputArr} />
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column", // stack rows instead of side-by-side
+        alignItems: "center",
+        gap: 40,
+        padding: 40,
+      }}
+    >
+      <div style={{ textAlign: "center" }}>
+        <h3>Draw Digit</h3>
+        <InputCanvas width={350} height={350} onChange={setInputArr} />
       </div>
-      <div style={{ flexGrow: 1 }}>
-        <h3 style={{ color: "#fff" }}>Activations</h3>
+
+      <div style={{ width: "100%" }}>
+        <h3 style={{ color: "#eee", textAlign: "center" }}>Activations</h3>
         <NetworkVis acts={activations} error={error} />
       </div>
     </div>

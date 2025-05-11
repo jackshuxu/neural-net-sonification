@@ -1,37 +1,16 @@
-// src/components/InputCanvas.js
 import React, { useRef, useEffect, useCallback } from "react";
 
-export default function InputCanvas({ onChange }) {
+export default function InputCanvas({ width = 280, height = 280, onChange }) {
   const canvasRef = useRef(null);
   const smallRef = useRef(null);
   const drawing = useRef(false);
 
-  // Initialize big & small canvases
-  useEffect(() => {
-    const cnv = canvasRef.current;
-    cnv.width = 280;
-    cnv.height = 280;
-    const ctx = cnv.getContext("2d");
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, cnv.width, cnv.height);
-
-    // create an offscreen 28×28 canvas
-    const small = document.createElement("canvas");
-    small.width = 28;
-    small.height = 28;
-    smallRef.current = small;
-
-    // Emit the initial blank input
-    updateInput();
-  }, []);
-
-  // Down‐sample & emit
+  // Down‐sample & emit input
   const updateInput = useCallback(() => {
     const cnv = canvasRef.current;
     const small = smallRef.current;
+    if (!cnv || !small) return;
     const smallCtx = small.getContext("2d");
-
-    // draw & scale
     smallCtx.drawImage(
       cnv,
       0,
@@ -43,21 +22,36 @@ export default function InputCanvas({ onChange }) {
       small.width,
       small.height
     );
-
     const img = smallCtx.getImageData(0, 0, small.width, small.height).data;
     const arr = [];
     for (let i = 0; i < img.length; i += 4) {
-      // we drew white-on-black, so R==G==B; just take R
       arr.push(img[i] / 255);
     }
     onChange(arr);
   }, [onChange]);
 
-  // Handlers
-  const pointerDown = (e) => {
+  // Initialize big + offscreen small canvas
+  useEffect(() => {
+    const cnv = canvasRef.current;
+    cnv.width = width;
+    cnv.height = height;
+    const ctx = cnv.getContext("2d");
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, cnv.width, cnv.height);
+
+    const small = document.createElement("canvas");
+    small.width = 28;
+    small.height = 28;
+    smallRef.current = small;
+
+    updateInput();
+  }, [width, height, updateInput]);
+
+  // Pointer event handlers
+  const pointerDown = () => {
     drawing.current = true;
   };
-  const pointerUp = (e) => {
+  const pointerUp = () => {
     drawing.current = false;
     updateInput();
   };
@@ -65,10 +59,9 @@ export default function InputCanvas({ onChange }) {
     if (!drawing.current) return;
     const cnv = canvasRef.current;
     const rect = cnv.getBoundingClientRect();
-    const ctx = cnv.getContext("2d");
-    // map pointer coords → canvas coords
     const x = ((e.clientX - rect.left) / rect.width) * cnv.width;
     const y = ((e.clientY - rect.top) / rect.height) * cnv.height;
+    const ctx = cnv.getContext("2d");
     ctx.fillStyle = "white";
     ctx.beginPath();
     ctx.arc(x, y, 12, 0, Math.PI * 2);
@@ -76,13 +69,46 @@ export default function InputCanvas({ onChange }) {
     updateInput();
   };
 
+  // Clear button
+  const clearCanvas = useCallback(() => {
+    const cnv = canvasRef.current;
+    const ctx = cnv.getContext("2d");
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, cnv.width, cnv.height);
+    updateInput();
+  }, [updateInput]);
+
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ border: "1px solid #444", touchAction: "none" }}
-      onPointerDown={pointerDown}
-      onPointerUp={pointerUp}
-      onPointerMove={pointerMove}
-    />
+    <div style={{ position: "relative", display: "inline-block" }}>
+      <canvas
+        ref={canvasRef}
+        style={{
+          width: `${width}px`,
+          height: `${height}px`,
+          border: "2px solid #666",
+          borderRadius: 8,
+          background: "#222",
+          cursor: "crosshair",
+        }}
+        onPointerDown={pointerDown}
+        onPointerUp={pointerUp}
+        onPointerMove={pointerMove}
+      />
+      <button
+        onClick={clearCanvas}
+        style={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          padding: "4px 8px",
+          background: "#eee",
+          border: "none",
+          borderRadius: 4,
+          cursor: "pointer",
+        }}
+      >
+        Clear
+      </button>
+    </div>
   );
 }
