@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputCanvas from "./components/InputCanvas";
 import NetworkVis from "./components/NetworkVis";
 import useNetwork from "./hooks/useNetwork";
@@ -6,6 +6,20 @@ import useNetwork from "./hooks/useNetwork";
 export default function App() {
   const [inputArr, setInputArr] = useState(Array(784).fill(0));
   const { activations, error } = useNetwork(inputArr);
+
+  // whenever activations change, POST to our gateway
+  useEffect(() => {
+    if (!activations) return;
+    fetch("http://localhost:3001/activations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        hidden1: activations.hidden1,
+        hidden2: activations.hidden2,
+        output: activations.output,
+      }),
+    }).catch(console.error);
+  }, [activations]);
 
   return (
     <div
