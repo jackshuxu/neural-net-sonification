@@ -18,13 +18,24 @@ const oscPort = new UDPPort({
 oscPort.open();
 
 app.post("/activations", (req, res) => {
-  const { hidden1, hidden2, output } = req.body;
-  console.log("→ Received:", {
-    h1: hidden1.length,
-    h2: hidden2.length,
-    out: output.length,
-  });
+  // pull in the original arrays
+  let { hidden1, hidden2, output } = req.body;
 
+  // helper to round to 0.01
+  const round2 = (arr) => arr.map((v) => Math.round(v * 100) / 100);
+
+  // quantize _in place_
+  hidden1 = round2(hidden1);
+  hidden2 = round2(hidden2);
+  output = round2(output);
+
+  // log the quantized arrays
+  console.log("→ Received (rounded to .01):");
+  console.log("   hidden1:", JSON.stringify(hidden1));
+  console.log("   hidden2:", JSON.stringify(hidden2));
+  console.log("   output :", JSON.stringify(output));
+
+  // send the same quantized arrays over OSC
   oscPort.send({
     address: "/hidden1",
     args: hidden1.map((v) => ({ type: "f", value: v })),
@@ -37,6 +48,7 @@ app.post("/activations", (req, res) => {
     address: "/output",
     args: output.map((v) => ({ type: "f", value: v })),
   });
+
   console.log("→ OSC sent to port 57120");
   res.sendStatus(200);
 });
