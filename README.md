@@ -10,6 +10,8 @@ The project's design emphasizes exploration and intuition. Users interact with t
 
 For me, this project is a memory of a good old-fashioned AI, designed to do one simple task: recognize digits, albeit poorly.
 
+---
+
 This repository contains a web-based demo that:
 
 1. **Draws** MNIST-style digits on a canvas (React).
