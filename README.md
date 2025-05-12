@@ -16,7 +16,7 @@ This repository contains a web‑based demo that:
 - **Activation display** panel showing `hidden1`, `hidden2`, and `output` arrays in real time.
 - **3D network visualization** of activations using Three.js.
 - **OSC gateway** (`server.js`) forwarding activations to SuperCollider.
-- **SuperCollider patch** that maps activations to musical notes in C minor at 40 BPM.
+- **SuperCollider patch** that maps activations to musical notes in C minor at 120 BPM.
 
 ---
 
@@ -86,7 +86,7 @@ This repository contains a web‑based demo that:
 4. **Draw** a digit on the canvas.
 
    - The network will compute activations, visualize them, and send them to SuperCollider.
-   - You’ll hear ambient pads (hidden layers) and a melodic lead (output) in C minor at 40 BPM.
+   - You’ll hear ambient pads (hidden layers) and a melodic lead (output) in C minor at 120 BPM.
 
 ---
 
@@ -105,11 +105,3 @@ This repository contains a web‑based demo that:
 - **CORS**: the Node gateway uses `cors({ origin: "http://localhost:3000" })`. Make sure your front‑end runs on that origin.
 - **OSC messages**: check the SuperCollider Post window for `— pad tick` and `/hidden1` logs.
 - **Missing weight files**: re‑upload your `.txt` weight/bias files into `public/weights/` if you see loading errors.
-
----
-
-## 🤝 Contributing
-
-Feel free to open issues or PRs for feature requests, bug fixes, or enhancements. Enjoy exploring neural network sonification!
-
----
