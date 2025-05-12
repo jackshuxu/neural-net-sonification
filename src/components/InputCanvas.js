@@ -80,55 +80,37 @@ export default function InputCanvas({ width = 280, height = 280, onChange }) {
     updateInput();
   }, [updateInput]);
 
+  // shared button style
+  const btnStyle = {
+    padding: 8,
+    background: "transparent",
+    border: "1px solid #fff",
+    borderRadius: 4,
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#fff",
+  };
+
   return (
     <div style={{ position: "relative", display: "inline-block" }}>
       <div style={{ marginBottom: 8, display: "flex", gap: 8 }}>
         <button
           onClick={() => setMode("pencil")}
-          style={{
-            padding: 8,
-            background: mode === "pencil" ? "#ccc" : "#eee",
-            border: "none",
-            borderRadius: 4,
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+          style={{ ...btnStyle, opacity: mode === "pencil" ? 1 : 0.6 }}
           title="Pencil"
         >
           <FaPencilAlt size={16} />
         </button>
         <button
           onClick={() => setMode("eraser")}
-          style={{
-            padding: 8,
-            background: mode === "eraser" ? "#ccc" : "#eee",
-            border: "none",
-            borderRadius: 4,
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+          style={{ ...btnStyle, opacity: mode === "eraser" ? 1 : 0.6 }}
           title="Eraser"
         >
           <FaEraser size={16} />
         </button>
-        <button
-          onClick={clearCanvas}
-          style={{
-            padding: 8,
-            background: "#eee",
-            border: "none",
-            borderRadius: 4,
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          title="Clear"
-        >
+        <button onClick={clearCanvas} style={btnStyle} title="Clear">
           <FaTimes size={16} />
         </button>
       </div>

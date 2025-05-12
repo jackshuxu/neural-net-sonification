@@ -9,6 +9,7 @@ export default function App() {
   const { activations, error } = useNetwork(inputArr);
 
   // derive hidden2/output safely
+  const hidden1 = activations?.hidden1 || [];
   const hidden2 = activations?.hidden2 || [];
   const output = activations?.output || [];
 
@@ -55,7 +56,11 @@ export default function App() {
           <h3 style={{ color: "#eee", textAlign: "center" }}>
             {/* Activation Data */}
           </h3>
-          <ActivationDisplay hidden2={hidden2} output={output} />
+          <ActivationDisplay
+            hidden1={hidden1}
+            hidden2={hidden2}
+            output={output}
+          />
         </div>
       </div>
 
