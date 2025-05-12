@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import InputCanvas from "./components/InputCanvas";
 import NetworkVis from "./components/NetworkVis";
+import ActivationDisplay from "./components/ActivationDisplay";
 import useNetwork from "./hooks/useNetwork";
 
 export default function App() {
   const [inputArr, setInputArr] = useState(Array(784).fill(0));
   const { activations, error } = useNetwork(inputArr);
+
+  // derive hidden2/output safely
+  const hidden2 = activations?.hidden2 || [];
+  const output = activations?.output || [];
 
   // whenever activations change, POST to our gateway
   useEffect(() => {
@@ -25,19 +30,40 @@ export default function App() {
     <div
       style={{
         display: "flex",
-        flexDirection: "column", // stack rows instead of side-by-side
+        flexDirection: "column",
         alignItems: "center",
         gap: 40,
         padding: 40,
       }}
     >
-      <div style={{ textAlign: "center" }}>
-        <h3>Draw Digit</h3>
-        <InputCanvas width={350} height={350} onChange={setInputArr} />
+      {/* Row: Input Canvas and Activation Display */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "flex-start",
+          gap: 40,
+          width: "100%",
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <h3>Draw Digit</h3>
+          <InputCanvas width={350} height={350} onChange={setInputArr} />
+        </div>
+
+        <div style={{ flex: 1 }}>
+          <h3 style={{ color: "#eee", textAlign: "center" }}>
+            {/* Activation Data */}
+          </h3>
+          <ActivationDisplay hidden2={hidden2} output={output} />
+        </div>
       </div>
 
+      {/* Row: Network Visualization */}
       <div style={{ width: "100%" }}>
-        <h3 style={{ color: "#eee", textAlign: "center" }}>Activations</h3>
+        <h3 style={{ color: "#eee", textAlign: "center" }}>
+          Activations Visualization
+        </h3>
         <NetworkVis acts={activations} error={error} />
       </div>
     </div>
