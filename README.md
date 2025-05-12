@@ -1,70 +1,115 @@
-# Getting Started with Create React App
+# Neural Network Visualization & Sonification
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repository contains a web‑based demo that:
 
-## Available Scripts
+1. **Draws** MNIST‑style digits on a canvas (React).
+2. **Feeds** the down‑sampled input into a simple 2‑hidden‑layer neural network (TensorFlow\.js).
+3. **Visualizes** the activations of each layer in 3D (React + react‑three‑fiber).
+4. **Streams** activation data via OSC (Node.js gateway).
+5. **Sonifies** the network’s hidden and output activations as ambient pads and melodies in SuperCollider, quantized to C minor.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🚀 Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Interactive drawing** with pencil/eraser modes and clear button.
+- **Activation display** panel showing `hidden1`, `hidden2`, and `output` arrays in real time.
+- **3D network visualization** of activations using Three.js.
+- **OSC gateway** (`server.js`) forwarding activations to SuperCollider.
+- **SuperCollider patch** that maps activations to musical notes in C minor at 40 BPM.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 📁 Repo Structure
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+├── public
+│   └── weights/          # (Optional) Place your weight1.txt, biases1.txt, etc. here
+├── src
+│   ├── components
+│   │   ├── InputCanvas.js
+│   │   ├── NetworkVis.js
+│   │   └── ActivationDisplay.js
+│   ├── hooks
+│   │   └── useNetwork.js
+│   ├── App.js
+│   └── index.js
+├── server.js              # Node.js OSC gateway
+├── mlp_cminor_sonification.scd  # SuperCollider patch
+└── package.json
+```
 
-### `npm run build`
+> ⚠️ **Note:** If you wish to load your trained MNIST weight/bias files, place them in `public/weights/`. If those files are missing or expired, re‑upload them before starting the app.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## ⚙️ Installation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. **Clone** the repo:
 
-### `npm run eject`
+   ```bash
+   git clone https://github.com/your‑username/nn‑visualization.git
+   cd nn‑visualization
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. **Install** dependencies:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ```bash
+   npm install        # installs React app + server dependencies
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. **(Optional) Place** your `weight*.txt` and `biases*.txt` files into `public/weights/`.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+## ▶️ Running the Demo
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. **Start** the Node OSC gateway (port 3001):
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+   ```bash
+   node server.js
+   ```
 
-### Code Splitting
+2. **Launch** the React app (port 3000):
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+   ```bash
+   npm start
+   ```
 
-### Analyzing the Bundle Size
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+3. **Open** the SuperCollider patch `mlp_sonification.scd` in SuperCollider IDE:
 
-### Making a Progressive Web App
+   - Select all, press **⌘+Return** to boot the server and run the patch.
+   - Open the Post window (**⌘+L**) to see OSC messages and beat ticks.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+4. **Draw** a digit on the canvas.
 
-### Advanced Configuration
+   - The network will compute activations, visualize them, and send them to SuperCollider.
+   - You’ll hear ambient pads (hidden layers) and a melodic lead (output) in C minor at 40 BPM.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## 🛠️ Customization
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- **Brush size**: adjust the `ctx.arc(..., radius, ...)` in `InputCanvas.js`.
+- **Sonification tempo**: modify `TempoClock.default.tempo` in the SuperCollider patch.
+- **Scale**: change the `cMinor` array in `mlp_cminor_sonification.scd` to any other scale degrees.
+- **Network architecture**: edit `useNetwork.js` to load different model files or adjust layer sizes.
 
-### `npm run build` fails to minify
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 📝 Troubleshooting
+
+- **React errors**: ensure you’ve installed all dependencies. If using icons, run `npm install react-icons`.
+- **CORS**: the Node gateway uses `cors({ origin: "http://localhost:3000" })`. Make sure your front‑end runs on that origin.
+- **OSC messages**: check the SuperCollider Post window for `— pad tick` and `/hidden1` logs.
+- **Missing weight files**: re‑upload your `.txt` weight/bias files into `public/weights/` if you see loading errors.
+
+---
+
+## 🤝 Contributing
+
+Feel free to open issues or PRs for feature requests, bug fixes, or enhancements. Enjoy exploring neural network sonification!
+
+---
